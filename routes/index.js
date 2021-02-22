@@ -13,7 +13,9 @@ router.get('/register', (req, res) => {
 
 
 router.get('/dashboard', (req, res) => {
-	res.render('dashboard');
+	res.render('dashboard', {
+		user: req.user
+	});
 })
 
 module.exports = router;
