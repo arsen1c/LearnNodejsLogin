@@ -2,6 +2,9 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const expressEjsLayout = require('express-ejs-layouts');
+
+const flash = require('connect-flash');
+const session = require('express-session');
 require('dotenv').config();
 
 //mongoose
@@ -16,6 +19,20 @@ app.set('view engine', 'ejs');
 app.use(expressEjsLayout);
 // bodyparser
 app.use(express.urlencoded({ extended: false }));
+// Express Session (used for connect-flash)
+app.use(session({
+	secret : 'arsen1c',
+	resave: true,
+	saveUninitialized: true
+}));
+// Use flash
+app.use(flash());
+app.use((req, res, next) => {
+	res.locals.success_msg = req.flash('success_msg');
+	res.locals.error_msg = req.flash('error_msg');
+	res.locals.error = req.flash('error');
+	next();
+});
 
 // Routes
 app.use('/', require('./routes/index'));
