@@ -19,6 +19,7 @@ router.get('/register', (req, res) => {
 router.post('/register', (req, res) => {
 	console.log(req.body);
 	const { name, email, password, password2 } = req.body;
+	// Array of errors
 	let errors = [];
 	console.log(`Name: ${name}\nEmail: ${email}\nPass: ${password}`);
 
@@ -26,26 +27,26 @@ router.post('/register', (req, res) => {
 		errors.push({ msg: 'Please fill in all the fields' });
 	} 
 
-	// Check if match
+	// Check if both passwords match
 	if (password !== password2) {
 		errors.push({ msg: 'Passwords does not match' });
 	}
 
-	// Check if password is more than 6 charcayers
-	if (password.length < 6) {
-		errors.push({ msg: 'Password must be of atleast 6 characters long' });
+	// Check if password is more than 5 charcayers
+	if (password.length < 5) {
+		errors.push({ msg: 'Password must be of atleast 5 characters long' });
 	}
 
 	if (errors.length > 0) {
-		res.render('register', { errors, name, email, password, password2 })
+		res.render('register', { errors, name, email, password, password2 });
 	} else {
 		// validation passed
 		User.findOne({email: email}).exec((err, user) => {
 			console.log(user);
 			if (user) {
-				console.log("EMIL EXISTS")
+				console.log("EMAIL EXISTS")
 				errors.push({ msg: 'Email already registered' });
-				res.render('register', { errors })
+				res.render('register', { errors });
 			} else {
 				const newUser = new User( {
 					name,
