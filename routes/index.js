@@ -12,4 +12,8 @@ router.get('/register', (req, res) => {
 })
 
 
+router.get('/dashboard', (req, res) => {
+	res.render('dashboard');
+})
+
 module.exports = router;

@@ -2,6 +2,10 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const expressEjsLayout = require('express-ejs-layouts');
+const passport = require('passport');
+
+// Assign the LocalStrategy configuration
+require("./config/passport")(passport);
 
 const flash = require('connect-flash');
 const session = require('express-session');
@@ -27,6 +31,8 @@ app.use(session({
 }));
 // Use flash
 app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use((req, res, next) => {
 	res.locals.success_msg = req.flash('success_msg');
 	res.locals.error_msg = req.flash('error_msg');
