@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const passport = require('passport');
+const { ensureVerified } = require('../config/auth.js');
+const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+require('dotenv').config();
 // User Model
 const User = require('../models/user.js');
 
@@ -13,6 +17,15 @@ router.get('/login', (req, res) => {
 })
 router.get('/register', (req, res) => {
 	res.render('register');
+})
+
+// Nodemailer Transporter
+const transporter = nodemailer.createTransport({
+	service: 'GMAIL',
+	auth: {
+		user: process.env.GMAIL_USER,
+		pass: process.env.GMAIL_PASS
+	}
 })
 
 // Register handler
@@ -53,6 +66,23 @@ router.post('/register', (req, res) => {
 					email,
 					password 
 				})
+				// Async Email
+				jwt.sign(
+					{user: newUser.email},
+					process.env.EMAIL_SECRET,
+					{expiresIn: '1d'},
+					(err, emailToken) => {
+						if (err) throw new Error(err);
+						const url = `http://localhost:3000/confirmation/${emailToken}`;
+						console.log('SENDIMG EMAIL TO: ' + newUser.email);
+						transporter.sendMail({
+							to: newUser.email,
+							subject: 'Confirm Email',
+							html: `Please click this email to confirm your email <br>` +
+									`<a href="${url}">${url}</a>`
+						})
+					}
+				)
 				// Hash the password
 				bcrypt.hash(newUser.password, salt, (err, hash) => {
 					if (err) throw err;
@@ -61,11 +91,13 @@ router.post('/register', (req, res) => {
 					newUser.save()
 						.then(value => {
 							console.log(value);
-							req.flash('success_msg', 'You have now registered!');
+							req.flash('success_msg', 'Success! Check your email for confirmation link');
 							res.redirect('/users/login');
 						})
 						.catch(err => console.log(err));
 				})
+
+
 			}
 		})
 	}

@@ -15,6 +15,11 @@ const UserSchema = new mongoose.Schema({
 	date: {
 		type: Date,
 		default: Date.now 
+	},
+	// For Email Activation
+	isVerified: {
+		type: Boolean,
+		default: false,
 	}
 });
 
