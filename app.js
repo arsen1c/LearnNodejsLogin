@@ -6,6 +6,7 @@ const passport = require('passport');
 
 // Assign the LocalStrategy configuration
 require("./config/passport")(passport);
+require("./config/passport-google.js")(passport);
 
 const flash = require('connect-flash');
 const session = require('express-session');
