@@ -1,1 +1,2 @@
-### This branch has all the boilerplate code which will get you started.
+### Registration
+Registering a user and storing the data in the Mongo database.
